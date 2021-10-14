@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package lms.v1;
+
+option go_package = "fxkt.tech/bj21/api/lms/v1;v1";
+
+enum ErrorReason {
+  ERROR_REASON_UNSPECIFIED = 0;
+
+  USER_NOT_FOUND = 1;
+}
