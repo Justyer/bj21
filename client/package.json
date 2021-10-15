@@ -2,14 +2,19 @@
   "name": "bj21",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Justyer",
   "license": "MIT",
   "devDependencies": {
     "electron": "^15.1.2"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.4.1",
+    "@grpc/proto-loader": "^0.6.5",
+    "element-ui": "^2.15.6"
   }
 }

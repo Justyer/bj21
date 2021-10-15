@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlackJackClient interface {
 	EnterRoom(ctx context.Context, in *EnterRoomRequest, opts ...grpc.CallOption) (*EnterRoomReply, error)
+	Chat(ctx context.Context, opts ...grpc.CallOption) (BlackJack_ChatClient, error)
 }
 
 type blackJackClient struct {
@@ -38,11 +39,43 @@ func (c *blackJackClient) EnterRoom(ctx context.Context, in *EnterRoomRequest, o
 	return out, nil
 }
 
+func (c *blackJackClient) Chat(ctx context.Context, opts ...grpc.CallOption) (BlackJack_ChatClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BlackJack_ServiceDesc.Streams[0], "/bj21.v1.BlackJack/Chat", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &blackJackChatClient{stream}
+	return x, nil
+}
+
+type BlackJack_ChatClient interface {
+	Send(*ChatContent) error
+	Recv() (*ChatContent, error)
+	grpc.ClientStream
+}
+
+type blackJackChatClient struct {
+	grpc.ClientStream
+}
+
+func (x *blackJackChatClient) Send(m *ChatContent) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *blackJackChatClient) Recv() (*ChatContent, error) {
+	m := new(ChatContent)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // BlackJackServer is the server API for BlackJack service.
 // All implementations must embed UnimplementedBlackJackServer
 // for forward compatibility
 type BlackJackServer interface {
 	EnterRoom(context.Context, *EnterRoomRequest) (*EnterRoomReply, error)
+	Chat(BlackJack_ChatServer) error
 	mustEmbedUnimplementedBlackJackServer()
 }
 
@@ -52,6 +85,9 @@ type UnimplementedBlackJackServer struct {
 
 func (UnimplementedBlackJackServer) EnterRoom(context.Context, *EnterRoomRequest) (*EnterRoomReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnterRoom not implemented")
+}
+func (UnimplementedBlackJackServer) Chat(BlackJack_ChatServer) error {
+	return status.Errorf(codes.Unimplemented, "method Chat not implemented")
 }
 func (UnimplementedBlackJackServer) mustEmbedUnimplementedBlackJackServer() {}
 
@@ -84,6 +120,32 @@ func _BlackJack_EnterRoom_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BlackJack_Chat_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(BlackJackServer).Chat(&blackJackChatServer{stream})
+}
+
+type BlackJack_ChatServer interface {
+	Send(*ChatContent) error
+	Recv() (*ChatContent, error)
+	grpc.ServerStream
+}
+
+type blackJackChatServer struct {
+	grpc.ServerStream
+}
+
+func (x *blackJackChatServer) Send(m *ChatContent) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *blackJackChatServer) Recv() (*ChatContent, error) {
+	m := new(ChatContent)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // BlackJack_ServiceDesc is the grpc.ServiceDesc for BlackJack service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,6 +158,13 @@ var BlackJack_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BlackJack_EnterRoom_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Chat",
+			Handler:       _BlackJack_Chat_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "api/bj21/v1/bj21.proto",
 }

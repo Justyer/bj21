@@ -16,6 +16,48 @@
     "application/json"
   ],
   "paths": {
+    "/bj21.v1.BlackJack/Chat": {
+      "post": {
+        "operationId": "BlackJack_Chat",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1ChatContent"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1ChatContent"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " (streaming inputs)",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChatContent"
+            }
+          }
+        ],
+        "tags": [
+          "BlackJack"
+        ]
+      }
+    },
     "/bj21.v1.BlackJack/EnterRoom": {
       "post": {
         "operationId": "BlackJack_EnterRoom",
@@ -53,11 +95,14 @@
     "protobufAny": {
       "type": "object",
       "properties": {
-        "@type": {
+        "typeUrl": {
           "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
         }
-      },
-      "additionalProperties": {}
+      }
     },
     "rpcStatus": {
       "type": "object",
@@ -74,6 +119,14 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
+        }
+      }
+    },
+    "v1ChatContent": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },

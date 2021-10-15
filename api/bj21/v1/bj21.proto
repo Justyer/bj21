@@ -7,18 +7,10 @@ import "google/api/annotations.proto";
 option go_package = "fxkt.tech/bj21/api/bj21/v1;v1";
 
 service BlackJack {
-  rpc EnterRoom (EnterRoomRequest) returns (EnterRoomReply)  {
-    option (google.api.http) = {
-      post: "/bj21.v1.BlackJack/EnterRoom",
-      body: "*",
-    };
-  }
+  rpc Conn (stream Message) returns (stream Message)  {}
 }
 
-message EnterRoomRequest {
-    int32 room_id = 1;
-}
-
-message EnterRoomReply {
-    string room_token = 1;
+message Message {
+  string cmd = 1;
+  bytes text = 2;
 }
