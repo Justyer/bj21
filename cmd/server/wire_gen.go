@@ -25,9 +25,8 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	blackJackRepo := data.Newbj21Repo(dataData, logger)
 	blackJackUsecase := biz.NewBlackJackUsecase(blackJackRepo, logger)
 	blackJackService := service.NewBlackJackService(blackJackUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, blackJackService, logger)
 	grpcServer := server.NewGRPCServer(confServer, blackJackService, logger)
-	app := newApp(logger, httpServer, grpcServer)
+	app := newApp(logger, grpcServer)
 	return app, func() {
 		cleanup()
 	}, nil

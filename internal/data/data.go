@@ -2,6 +2,7 @@ package data
 
 import (
 	"fxkt.tech/bj21/internal/conf"
+	"fxkt.tech/bj21/internal/data/logic"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
@@ -11,6 +12,7 @@ var (
 )
 
 type Data struct {
+	world *logic.World
 }
 
 func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
@@ -18,5 +20,9 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		logger.Log(log.LevelWarn, "status", "closing the data resources")
 	}
 
-	return &Data{}, cleanup, nil
+	world := logic.NewWorld()
+
+	return &Data{
+		world: world,
+	}, cleanup, nil
 }

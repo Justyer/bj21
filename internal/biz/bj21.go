@@ -1,13 +1,12 @@
 package biz
 
 import (
-	"context"
-
+	v1 "fxkt.tech/bj21/api/bj21/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type BlackJackRepo interface {
-	EnterRoom(ctx context.Context, roomid int32) (token string, err error)
+	LogicConn(srv v1.BlackJack_LogicConnServer) error
 }
 
 type BlackJackUsecase struct {
@@ -19,6 +18,6 @@ func NewBlackJackUsecase(repo BlackJackRepo, logger log.Logger) *BlackJackUsecas
 	return &BlackJackUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *BlackJackUsecase) EnterRoom(ctx context.Context, roomid int32) (token string, err error) {
-	return uc.repo.EnterRoom(ctx, roomid)
+func (uc *BlackJackUsecase) LogicConn(srv v1.BlackJack_LogicConnServer) error {
+	return uc.repo.LogicConn(srv)
 }

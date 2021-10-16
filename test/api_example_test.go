@@ -1,57 +1,139 @@
 package test
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"net/http"
-	"net/http/httputil"
 	"testing"
 	"time"
 
 	v1 "fxkt.tech/bj21/api/bj21/v1"
-	"google.golang.org/grpc"
-
+	"fxkt.tech/bj21/internal/pkg/enum"
 	"fxkt.tech/bj21/internal/pkg/json"
+	"google.golang.org/grpc"
 )
 
 const (
-	host     = "http://0.0.0.0:8008"
-	grpchost = "0.0.0.0:9009"
+	host = "0.0.0.0:9009"
 )
 
-func TestEnterRoom(t *testing.T) {
-	req := v1.EnterRoomRequest{RoomId: 8989}
-	reqb := json.ToBytes(&req)
-	url := host + "/bj21.v1.BlackJack/EnterRoom"
-	res, err := http.Post(url, "application/json", bytes.NewReader(reqb))
-	if err != nil {
-		t.Error(err)
-	}
-	_ = res
-	qb, _ := httputil.DumpRequest(res.Request, true)
-	t.Log(string(qb))
-	sb, _ := httputil.DumpResponse(res, true)
-	t.Log(string(sb))
-}
-
-func TestChat(t *testing.T) {
+func initcli() (v1.BlackJack_LogicConnClient, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-	defer cancel()
-	conn, err := grpc.DialContext(ctx, grpchost, grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, host, grpc.WithInsecure())
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
 	client := v1.NewBlackJackClient(conn)
-	cli, err := client.Chat(ctx)
+	logicCli, err := client.LogicConn(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return logicCli, cancel
+}
+
+func TestLogic(t *testing.T) {
+	logicCli, cancel := initcli()
+	defer cancel()
+
+	err := logicCli.Send(&v1.Message{
+		Cmd: enum.CmdLogin,
+		Text: json.ToBytes(&v1.LoginRequest{
+			Name: "dengxc",
+		}),
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	for i := 0; i < 9; i++ {
-		err = cli.Send(&v1.ChatContent{Message: fmt.Sprintf("hello: %d", i)})
+	var token string
+
+	for {
+		rmsg, err := logicCli.Recv()
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		switch rmsg.Cmd {
+		case enum.CmdLogin:
+			var res v1.LoginReply
+			json.ToObjectByBytes(rmsg.Text, &res)
+			token = res.Token
+			logicCli.Send(&v1.Message{
+				Cmd:  "tablelist",
+				Text: json.ToBytes(&v1.TableListRequest{Token: token}),
+			})
+		case enum.CmdTableList:
+			var res v1.TableListReply
+			json.ToObjectByBytes(rmsg.Text, &res)
+			for _, tb := range res.Tables {
+				fmt.Println(tb.String())
+			}
+			logicCli.Send(&v1.Message{
+				Cmd: enum.CmdSitDown,
+				Text: json.ToBytes(&v1.SitDownRequest{
+					Token:    token,
+					TableSeq: res.Tables[0].Seq,
+				}),
+			})
+		case enum.CmdSitDown:
+			var res v1.SitDownReply
+			json.ToObjectByBytes(rmsg.Text, &res)
+			fmt.Println("enter table:", res.Err)
+			goto x
+		}
+
+		t.Log(rmsg.Cmd, string(rmsg.Text))
 	}
+x:
+	logicCli.Send(&v1.Message{
+		Cmd:  enum.CmdTableList,
+		Text: json.ToBytes(&v1.TableListRequest{Token: token}),
+	})
+	rmsg, err := logicCli.Recv()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var res v1.TableListReply
+	json.ToObjectByBytes(rmsg.Text, &res)
+	for _, tb := range res.Tables {
+		fmt.Println(tb.String())
+	}
+}
+
+func TestLogin(t *testing.T) {
+	logicCli, cancel := initcli()
+	defer cancel()
+	err := logicCli.Send(&v1.Message{
+		Cmd: enum.CmdLogin,
+		Text: json.ToBytes(&v1.LoginRequest{
+			Name: "dengxc",
+		}),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rmsg, err := logicCli.Recv()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(rmsg.Cmd, string(rmsg.Text))
+}
+
+func TestTableList(t *testing.T) {
+	logicCli, cancel := initcli()
+	defer cancel()
+	err := logicCli.Send(&v1.Message{
+		Cmd: "tablelist",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rmsg, err := logicCli.Recv()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(rmsg.Cmd, string(rmsg.Text))
 }
