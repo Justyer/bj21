@@ -26,6 +26,8 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 			return err
 		}
 
+		r.log.Debugw("cmd", msg.Cmd, "text", string(msg.Text), "textbytes", msg.Text)
+
 		switch msg.Cmd {
 		case enum.CmdLogin:
 			srv.Send(&v1.Message{
@@ -43,6 +45,5 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 				Text: r.sitdown(msg.Text),
 			})
 		}
-		r.log.Debugw("cmd", msg.Cmd)
 	}
 }

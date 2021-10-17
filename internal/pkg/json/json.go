@@ -11,7 +11,7 @@ func ToString(i interface{}) string {
 	}
 	b, err := json.Marshal(i)
 	if err != nil {
-		log.Println(err)
+		log.Println("json.ToString:", err)
 	}
 	return string(b)
 }
@@ -21,7 +21,7 @@ func ToBytes(i interface{}) (bs []byte) {
 	}
 	b, err := json.Marshal(i)
 	if err != nil {
-		log.Println(err)
+		log.Println("json.ToBytes:", err)
 	}
 	return b
 }
@@ -29,13 +29,13 @@ func ToBytes(i interface{}) (bs []byte) {
 func ToObject(s string, i interface{}) {
 	err := json.Unmarshal([]byte(s), &i)
 	if err != nil {
-		log.Println(err)
+		log.Println("json.ToObject:", err)
 	}
 }
 
 func ToObjectByBytes(b []byte, i interface{}) {
 	err := json.Unmarshal(b, &i)
 	if err != nil {
-		log.Println(err)
+		log.Println("json.ToObjectByBytes:", string(b), err)
 	}
 }

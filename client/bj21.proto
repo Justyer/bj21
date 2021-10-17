@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package bj21.v1;
+
+option go_package = "fxkt.tech/bj21/api/bj21/v1;v1";
+
+service BlackJack {
+  rpc LogicConn (stream Message) returns (stream Message)  {}
+}
+
+message Message {
+  string cmd = 1;
+  bytes text = 2;
+}
+
+message Player {
+  string name = 1;
+}
+
+message Table {
+  string name = 1;
+  string seq = 2;
+  Player p1 = 3;
+  Player p2 = 4;
+}
+
+// login
+message LoginRequest {
+  string name = 1;
+}
+message LoginReply {
+  string token = 2;
+}
+
+// sit down
+message SitDownRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message SitDownReply {
+  string err = 2;
+}
+
+// table list
+message TableListRequest {
+  string token = 1;
+}
+message TableListReply {
+  repeated Table tables = 1;
+}
