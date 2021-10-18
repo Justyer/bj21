@@ -13,8 +13,10 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@grpc/grpc-js": "^1.4.1",
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.28",
+    "google-protobuf": "^3.19.0-rc.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },

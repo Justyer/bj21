@@ -5,4 +5,9 @@ module.exports = {
       return args;
     });
   },
+  pluginOptions: {
+    electronBuilder: {
+      nodeIntegration: true
+    }
+  }
 };
