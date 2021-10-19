@@ -3,6 +3,6 @@ module.exports = {
         return new Buffer.from(JSON.stringify(dic), 'utf8').toString("base64")
     },
     bizKey: (biz) => {
-        return 'biz-' + biz
+        return 'reply-' + biz
     }
 }

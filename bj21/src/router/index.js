@@ -1,7 +1,8 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Home from "../views/Home.vue";
-// import About from "../views/About.vue";
 import Login from "../views/Login.vue";
+import Home from "../views/Home.vue";
+import TableList from "../views/TableList.vue";
+import Table from "../views/Table.vue";
 
 const routes = [
   {
@@ -18,6 +19,16 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/table_list",
+    name: "TableList",
+    component: TableList,
+  },
+  {
+    path: "/table/:seq",
+    name: "Table",
+    component: Table,
   },
   // {
   //   path: "/about",

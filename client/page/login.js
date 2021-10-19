@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron')
 
-ipcRenderer.on('biz-login', function (event, arg) {
+ipcRenderer.on('reply-login', function (event, arg) {
   // 切换场景：牌桌列表
   ipcRenderer.send('change_scene', {scene: 'tablelist'})
 })

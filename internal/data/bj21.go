@@ -26,24 +26,32 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 			return err
 		}
 
-		r.log.Debugw("cmd", msg.Cmd, "text", string(msg.Text), "textbytes", msg.Text)
+		r.log.Debugw("rr", "req", "cmd", msg.Cmd, "text", string(msg.Text))
 
+		var rmsg *v1.Message
 		switch msg.Cmd {
 		case enum.CmdLogin:
-			srv.Send(&v1.Message{
+			rmsg = &v1.Message{
 				Cmd:  msg.Cmd,
 				Text: r.login(msg.Text, srv),
-			})
+			}
 		case enum.CmdTableList:
-			srv.Send(&v1.Message{
+			rmsg = &v1.Message{
 				Cmd:  msg.Cmd,
 				Text: r.tablelist(),
-			})
+			}
 		case enum.CmdSitDown:
-			srv.Send(&v1.Message{
+			rmsg = &v1.Message{
 				Cmd:  msg.Cmd,
 				Text: r.sitdown(msg.Text),
-			})
+			}
+		case enum.CmdTableInfo:
+			rmsg = &v1.Message{
+				Cmd:  msg.Cmd,
+				Text: r.tableinfo(msg.Text),
+			}
 		}
+		srv.Send(rmsg)
+		r.log.Debugw("rr", "res", "cmd", rmsg.Cmd, "text", string(rmsg.Text))
 	}
 }

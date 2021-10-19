@@ -21,4 +21,5 @@ const (
 	CmdLogout    = "logout"
 	CmdTableList = "tablelist"
 	CmdSitDown   = "sitdown"
+	CmdTableInfo = "tableinfo"
 )

@@ -2,16 +2,8 @@
   <div>
     <Hall msg="主页"></Hall>
     <el-row>
-      <el-col :span="4" v-for="o in 18" :key="o" style="padding: 5px">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <el-button @click="gotohome" class="button" type="text">Kami's Table</el-button>
-            </div>
-          </template>
-          <el-tag v-for="o in 2" :key="o" type="success">Tag 2</el-tag>
-        </el-card>
-      </el-col>
+      <el-button @click="gotoSigleMatch" class="button" type="text" disabled>单人匹配</el-button>
+      <el-button @click="gotoTableList" class="button" type="text">牌桌列表</el-button>
     </el-row>
   </div>
 </template>
@@ -27,8 +19,11 @@ export default {
     return {};
   },
   methods: {
-    gotohome() {
-      this.$router.push("/");
+    gotoSigleMatch () {
+      
+    },
+    gotoTableList() {
+      this.$router.push("/table_list");
     },
   },
 };

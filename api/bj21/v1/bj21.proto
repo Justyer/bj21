@@ -38,6 +38,7 @@ message SitDownRequest {
   string table_seq = 2;
 }
 message SitDownReply {
+  string table_seq = 1;
   string err = 2;
 }
 
@@ -47,4 +48,13 @@ message TableListRequest {
 }
 message TableListReply {
   repeated Table tables = 1;
+}
+
+// table info
+message TableInfoRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message TableInfoReply {
+  Table table = 1;
 }

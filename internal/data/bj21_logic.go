@@ -48,6 +48,17 @@ func (r *bj21Repo) sitdown(txt []byte) []byte {
 	if err != nil {
 		errstr = err.Error()
 	}
-	res := &v1.SitDownReply{Err: errstr}
+	res := &v1.SitDownReply{
+		TableSeq: req.TableSeq,
+		Err:      errstr,
+	}
+	return json.ToBytes(res)
+}
+
+func (r *bj21Repo) tableinfo(txt []byte) []byte {
+	var req v1.TableInfoRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	res := &v1.TableInfoReply{Table: tableLToP(tb)}
 	return json.ToBytes(res)
 }

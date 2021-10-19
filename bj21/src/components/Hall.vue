@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ msg }}</h1>
+    <h1 style="margin:0">{{ msg }}</h1>
     <el-divider></el-divider>
   </div>
 </template>

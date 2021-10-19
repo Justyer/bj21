@@ -2,7 +2,7 @@ const { ipcRenderer } = require('electron')
 
 const tablelistDiv = document.getElementById('tablelistDiv')
 
-ipcRenderer.on('biz-tablelist', function (event, arg) {
+ipcRenderer.on('reply-tablelist', function (event, arg) {
   for (let i = 0; i < arg.text.tables.length; i++) {
     console.log(arg.text.tables[i].name, arg.text.tables[i].seq)
     let table = document.createElement('div')
