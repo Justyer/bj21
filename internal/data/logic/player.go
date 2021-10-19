@@ -28,3 +28,7 @@ func (p *Player) String() string {
 func (p *Player) GetToken() string {
 	return p.token
 }
+
+func (p *Player) TellMe(msg *v1.Message) error {
+	return p.conn.Send(msg)
+}

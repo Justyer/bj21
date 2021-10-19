@@ -25,33 +25,21 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 		if err != nil {
 			return err
 		}
-
 		r.log.Debugw("rr", "req", "cmd", msg.Cmd, "text", string(msg.Text))
-
-		var rmsg *v1.Message
+		var rtxt []byte
 		switch msg.Cmd {
 		case enum.CmdLogin:
-			rmsg = &v1.Message{
-				Cmd:  msg.Cmd,
-				Text: r.login(msg.Text, srv),
-			}
+			rtxt = r.login(msg.Text, srv)
 		case enum.CmdTableList:
-			rmsg = &v1.Message{
-				Cmd:  msg.Cmd,
-				Text: r.tablelist(),
-			}
+			rtxt = r.tablelist()
 		case enum.CmdSitDown:
-			rmsg = &v1.Message{
-				Cmd:  msg.Cmd,
-				Text: r.sitdown(msg.Text),
-			}
+			rtxt = r.sitdown(msg.Text)
 		case enum.CmdTableInfo:
-			rmsg = &v1.Message{
-				Cmd:  msg.Cmd,
-				Text: r.tableinfo(msg.Text),
-			}
+			rtxt = r.tableinfo(msg.Text)
+		case enum.CmdStandUp:
+			rtxt = r.standup(msg.Text)
 		}
-		srv.Send(rmsg)
-		r.log.Debugw("rr", "res", "cmd", rmsg.Cmd, "text", string(rmsg.Text))
+		srv.Send(&v1.Message{Cmd: msg.Cmd, Text: rtxt})
+		r.log.Debugw("rr", "res", "cmd", msg.Cmd, "text", string(rtxt))
 	}
 }

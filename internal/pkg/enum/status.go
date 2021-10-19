@@ -20,6 +20,7 @@ const (
 	CmdLogin     = "login"
 	CmdLogout    = "logout"
 	CmdTableList = "tablelist"
-	CmdSitDown   = "sitdown"
 	CmdTableInfo = "tableinfo"
+	CmdSitDown   = "sitdown"
+	CmdStandUp   = "standup"
 )

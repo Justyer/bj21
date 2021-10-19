@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+
+	v1 "fxkt.tech/bj21/api/bj21/v1"
 )
 
 type Table struct {
@@ -48,15 +50,24 @@ func (t *Table) SitDown(p *Player) error {
 }
 
 // 起身离开本桌
-func (t *Table) StandUp(p *Player) error {
+func (t *Table) StandUp(token string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	if t.P1.Name == p.Name {
+	if t.P1 != nil && t.P1.token == token {
 		t.P1 = nil
-	} else if t.P2.Name == p.Name {
+	} else if t.P2 != nil && t.P2.token == token {
 		t.P2 = nil
 	} else {
 		return errors.New("you are not in this table.")
 	}
 	return nil
+}
+
+// 房间内广播
+func (t *Table) Broadcast(msg *v1.Message, token string) {
+	if t.P1 != nil && t.P1.GetToken() != token {
+		t.P1.TellMe(msg)
+	} else if t.P2 != nil && t.P2.GetToken() != token {
+		t.P2.TellMe(msg)
+	}
 }

@@ -6,13 +6,21 @@
         <el-card class="box-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <el-button @click="gotoHome" class="button" type="text">{{ table.name }}:{{ table.seq }}</el-button>
+              <el-button
+                @click="gotoHome"
+                class="button"
+                type="text"
+              >{{ table.name }}:{{ table.seq }}</el-button>
             </div>
           </template>
           <el-tag type="success">P1:{{ table.player1.name }}</el-tag>
           <el-tag type="success">P2:{{ table.player2.name }}</el-tag>
         </el-card>
-        <router-link to="/table_list">TableList</router-link>
+        <el-button
+          @click="exitTable(this.table.seq)"
+          class="button"
+          type="text"
+        >exit</el-button>
       </el-col>
     </el-row>
   </div>
@@ -20,6 +28,7 @@
 
 <script>
 import { ipcRenderer } from "electron";
+import { ElMessage } from "element-plus";
 import Hall from "../components/Hall.vue";
 export default {
   name: "Table",
@@ -28,11 +37,9 @@ export default {
   },
   created() {
     this.getTableInfo(this.$route.params.seq);
-    console.log(this.$route.params.seq);
   },
   mounted() {
     ipcRenderer.on("reply-tableinfo", (event, arg) => {
-      console.log(arg);
       let p1_name, p2_name;
       if (typeof arg.text.table.p1 !== "undefined") {
         p1_name = arg.text.table.p1.name;
@@ -50,19 +57,25 @@ export default {
           name: p2_name,
         },
       };
-      console.log(this.table);
+    });
+    ipcRenderer.on("reply-standup", (event, arg) => {
+      if (typeof arg.text.err === "undefined") {
+        this.$router.push({ name: "TableList" });
+      } else {
+        ElMessage(arg.text.err);
+      }
     });
   },
   data() {
     return {
-      seq: "hflshgios",
       table: {
-        name: "kamistable",
+        name: "[unkown name]",
+        seq: "[unkown seq]",
         player1: {
-          name: "dxc",
+          name: "<nil>",
         },
         player2: {
-          name: "zxy",
+          name: "<nil>",
         },
       },
     };
@@ -78,6 +91,14 @@ export default {
     },
     gotoHome() {
       this.$router.push("/");
+    },
+    exitTable(seq) {
+      ipcRenderer.send("logic-conn", {
+        cmd: "standup",
+        text: {
+          table_seq: seq,
+        },
+      });
     },
   },
 };

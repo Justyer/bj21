@@ -57,7 +57,7 @@ export default {
       if (typeof arg.text.err === "undefined") {
         this.$router.push({
           name: "Table",
-          params: { seq: arg.text.table_seq },
+          params: { seq: arg.text.table.seq },
         });
       } else {
         ElMessage(arg.text.err);

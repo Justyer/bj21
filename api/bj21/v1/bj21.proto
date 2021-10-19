@@ -32,16 +32,6 @@ message LoginReply {
   string token = 2;
 }
 
-// sit down
-message SitDownRequest {
-  string token = 1;
-  string table_seq = 2;
-}
-message SitDownReply {
-  string table_seq = 1;
-  string err = 2;
-}
-
 // table list
 message TableListRequest {
   string token = 1;
@@ -57,4 +47,23 @@ message TableInfoRequest {
 }
 message TableInfoReply {
   Table table = 1;
+}
+
+// sit down
+message SitDownRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message SitDownReply {
+  Table table = 1;
+  string err = 2;
+}
+
+// stand up
+message StandUpRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message StandUpReply {
+  string err = 1;
 }

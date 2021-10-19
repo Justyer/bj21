@@ -17,7 +17,6 @@ const { marshalGrpcBytes, bizKey } = require('./util/igrpc')
 const client = new services.BlackJackClient('0.0.0.0:9009', grpc.credentials.createInsecure())
 const call = client.logicConn()
 let win // main windows.
-const temporaryEventPool = {} // 临时事件池，处理icpMain接收到消息后往服务器发送异步请求，在grpc的call.on中使用
 var token = '' // 用户登录后的临时token，暂时每次都需要登录
 
 async function createWindow() {
@@ -85,11 +84,10 @@ call.on('data', (note) => {
     token = textdic.token
   }
   const key = bizKey(note.getCmd())
-  temporaryEventPool[key].sender.send(key, {
+  win.webContents.send(key, {
     cmd: cmd,
     text: textdic,
   })
-  delete temporaryEventPool[key]
 })
 
 // 请求服务器接口
@@ -101,7 +99,6 @@ ipcMain.on('logic-conn', (event, arg) => {
   }
   msg.setText(marshalGrpcBytes(arg.text))
   call.write(msg)
-  temporaryEventPool[bizKey(arg.cmd)] = event
 })
 
 // Exit cleanly on request from parent process in development mode.

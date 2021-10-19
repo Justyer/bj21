@@ -1,6 +1,8 @@
 package logic
 
-import "fxkt.tech/bj21/internal/pkg/hashid"
+import (
+	"fxkt.tech/bj21/internal/pkg/hashid"
+)
 
 var defaulthid = hashid.New("bj21", 16)
 

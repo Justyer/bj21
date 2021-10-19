@@ -6,14 +6,15 @@ import (
 	"fxkt.tech/bj21/internal/pkg/json"
 )
 
+var emptyjson = []byte("{}")
+
 func (r *bj21Repo) login(txt []byte, srv v1.BlackJack_LogicConnServer) []byte {
 	var req v1.LoginRequest
 	json.ToObjectByBytes(txt, &req)
 	player := logic.NewPlayer(req.Name, srv)
 	r.data.world.AddOnlinePlayers(player)
 	token := player.GetToken()
-	res := &v1.LoginReply{Token: token}
-	return json.ToBytes(res)
+	return json.ToBytes(&v1.LoginReply{Token: token})
 }
 
 func (r *bj21Repo) tablelist() []byte {
@@ -34,8 +35,7 @@ func (r *bj21Repo) tablelist() []byte {
 			P2:   p2,
 		}
 	}
-	res := &v1.TableListReply{Tables: rtables}
-	return json.ToBytes(res)
+	return json.ToBytes(&v1.TableListReply{Tables: rtables})
 }
 
 func (r *bj21Repo) sitdown(txt []byte) []byte {
@@ -47,18 +47,39 @@ func (r *bj21Repo) sitdown(txt []byte) []byte {
 	err := tb.SitDown(p)
 	if err != nil {
 		errstr = err.Error()
+	} else {
+		tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, req.Token)
 	}
-	res := &v1.SitDownReply{
-		TableSeq: req.TableSeq,
-		Err:      errstr,
-	}
-	return json.ToBytes(res)
+	return json.ToBytes(&v1.SitDownReply{
+		Table: tableLToP(tb),
+		Err:   errstr,
+	})
 }
 
 func (r *bj21Repo) tableinfo(txt []byte) []byte {
 	var req v1.TableInfoRequest
 	json.ToObjectByBytes(txt, &req)
 	tb := r.data.world.GetTableBySeq(req.TableSeq)
-	res := &v1.TableInfoReply{Table: tableLToP(tb)}
-	return json.ToBytes(res)
+	return json.ToBytes(&v1.TableInfoReply{Table: tableLToP(tb)})
 }
+
+func (r *bj21Repo) standup(txt []byte) []byte {
+	var req v1.StandUpRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	var errstr string
+	err := tb.StandUp(req.Token)
+	if err != nil {
+		errstr = err.Error()
+	} else {
+		tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, req.Token)
+	}
+	return json.ToBytes(&v1.StandUpReply{Err: errstr})
+}
+
+// func (r *bj21Repo) broadcast(seq, token string) {
+// 	tb := r.data.world.GetTableBySeq(seq)
+// 	if tb.P1 != nil && tb.P1.GetToken() != token {
+// 		tb.P1.
+// 	}
+// }
