@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Hall msg="牌桌列表"></Hall>
+    <Header msg="牌桌列表"></Header>
     <el-row>
       <el-col :span="4" v-for="table in table_list" :key="table.name" style="padding: 5px">
         <el-card class="box-card" shadow="hover">
@@ -20,14 +20,14 @@
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
-import Hall from "../components/Hall.vue";
+import Header from "../components/Header.vue";
 export default {
   name: "TableName",
   created() {
     this.getTableList();
   },
   components: {
-    Hall,
+    Header,
   },
   mounted() {
     ipcRenderer.on("reply-tablelist", (event, arg) => {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Hall msg="主页"></Hall>
+    <Header msg="主页"></Header>
     <el-row>
       <el-button @click="gotoSigleMatch" class="button" type="text" disabled>单人匹配</el-button>
       <el-button @click="gotoTableList" class="button" type="text">牌桌列表</el-button>
@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import Hall from "../components/Hall.vue";
+import Header from "../components/Header.vue";
 export default {
   name: "Home",
   components: {
-    Hall,
+    Header,
   },
   data() {
     return {};

@@ -49,9 +49,10 @@ func (r *bj21Repo) sitdown(txt []byte) []byte {
 		errstr = err.Error()
 	} else {
 		tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, req.Token)
+		r.log.Debugw("cmd", "table-action", "ocmd", "sitdown")
 	}
 	return json.ToBytes(&v1.SitDownReply{
-		Table: tableLToP(tb),
+		Table: tableLToP(tb, req.Token),
 		Err:   errstr,
 	})
 }
@@ -60,7 +61,7 @@ func (r *bj21Repo) tableinfo(txt []byte) []byte {
 	var req v1.TableInfoRequest
 	json.ToObjectByBytes(txt, &req)
 	tb := r.data.world.GetTableBySeq(req.TableSeq)
-	return json.ToBytes(&v1.TableInfoReply{Table: tableLToP(tb)})
+	return json.ToBytes(&v1.TableInfoReply{Table: tableLToP(tb, req.Token)})
 }
 
 func (r *bj21Repo) standup(txt []byte) []byte {
@@ -73,6 +74,7 @@ func (r *bj21Repo) standup(txt []byte) []byte {
 		errstr = err.Error()
 	} else {
 		tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, req.Token)
+		r.log.Debugw("cmd", "table-action", "ocmd", "standup")
 	}
 	return json.ToBytes(&v1.StandUpReply{Err: errstr})
 }

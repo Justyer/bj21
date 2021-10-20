@@ -5,7 +5,7 @@ import (
 	"fxkt.tech/bj21/internal/data/logic"
 )
 
-func tableLToP(l *logic.Table) *v1.Table {
+func tableLToP(l *logic.Table, token string) *v1.Table {
 	if l == nil {
 		return nil
 	}
@@ -14,6 +14,7 @@ func tableLToP(l *logic.Table) *v1.Table {
 		Seq:  l.Seq,
 		P1:   playerLToP(l.P1),
 		P2:   playerLToP(l.P2),
+		Me:   l.MyLoc(token),
 	}
 }
 

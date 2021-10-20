@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Hall msg="登录"></Hall>
+    <Header msg="登录"></Header>
     <el-row class="login-card">
       <el-col :span="8">
         <el-card class="box-card" shadow="hover">
@@ -14,11 +14,11 @@
 
 <script>
 import { ipcRenderer } from "electron";
-import Hall from "../components/Hall.vue";
+import Header from "../components/Header.vue";
 export default {
   name: "Login",
   components: {
-    Hall,
+    Header,
   },
   data() {
     return {

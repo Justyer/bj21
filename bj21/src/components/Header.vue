@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 style="margin:0">{{ msg }}</h1>
-    <el-divider></el-divider>
+    <el-divider style="margin-top: 10px; margin-bottom: 10px"></el-divider>
   </div>
 </template>
 

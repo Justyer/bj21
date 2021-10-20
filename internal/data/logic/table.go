@@ -49,6 +49,17 @@ func (t *Table) SitDown(p *Player) error {
 	return nil
 }
 
+// 我的位置： p1 or p2.
+func (t *Table) MyLoc(token string) int32 {
+	if t.P1 != nil && t.P1.token == token {
+		return 1
+	} else if t.P2 != nil && t.P2.token == token {
+		return 2
+	} else {
+		return 0
+	}
+}
+
 // 起身离开本桌
 func (t *Table) StandUp(token string) error {
 	t.mu.Lock()

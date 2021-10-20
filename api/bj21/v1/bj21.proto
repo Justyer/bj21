@@ -22,6 +22,7 @@ message Table {
   string seq = 2;
   Player p1 = 3;
   Player p2 = 4;
+  int32 me = 5;
 }
 
 // login
