@@ -1,12 +1,22 @@
 <template>
-  <div>
-    <Header msg="Table List"></Header>
+  <div class="tablelist-style">
+    <el-row class="tablelist-menu">
+      <div class="tablelist-logo">Black! Jack! 21</div>
+    </el-row>
+    <el-row class="tablelist-menu">
+      <el-button @click="backToHome" style="color: white" type="text">Back to Home</el-button>
+    </el-row>
     <el-row>
-      <el-col :span="4" v-for="table in table_list" :key="table.name" style="padding: 5px">
+      <el-col :span="4" v-for="table in table_list" :key="table.name" style="padding: 10px">
         <el-card class="box-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <el-button @click="gotoTable(table.seq)" v-model="table.seq" class="button" type="text">{{ table.name }}</el-button>
+              <el-button
+                @click="gotoTable(table.seq)"
+                v-model="table.seq"
+                class="button"
+                type="text"
+              >{{ table.name }}</el-button>
             </div>
           </template>
           <el-tag type="success">P1:{{ table.player1.name }}</el-tag>
@@ -20,15 +30,12 @@
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
-import Header from "../components/Header.vue";
 export default {
   name: "TableName",
   created() {
     this.getTableList();
   },
-  components: {
-    Header,
-  },
+  components: {},
   mounted() {
     ipcRenderer.on("reply-tablelist", (event, arg) => {
       let table_list = [];
@@ -94,24 +101,35 @@ export default {
         },
       });
     },
+    backToHome() {
+      this.$router.push("/home");
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/* h3 {
-  margin: 40px 0 0;
+.tablelist-style {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
+  background-color: #008080;
+  width: 100%;
+  height: 100%;
+  /* filter: blur(5px); */
+  background: url("../assets/home_background.jpeg");
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.tablelist-logo {
+  color: #470024;
+  font-size: 100px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.tablelist-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
 }
-a {
-  color: #42b983;
-} */
 </style>

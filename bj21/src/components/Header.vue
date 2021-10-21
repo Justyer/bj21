@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 style="margin:0">{{ msg }}</h1>
-    <el-divider style="margin-top: 10px; margin-bottom: 10px"></el-divider>
+    <el-divider class="header-divider"></el-divider>
   </div>
 </template>
 
@@ -18,4 +18,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.header-divider {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
 </style>

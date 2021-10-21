@@ -20,6 +20,7 @@ func Newbj21Repo(data *Data, logger log.Logger) biz.BlackJackRepo {
 }
 
 func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
+	r.log.Debugw("add_conn", "xx")
 	for {
 		msg, err := srv.Recv()
 		if err != nil {

@@ -23,6 +23,14 @@
   font-family: MNFREJORMMAY1;
 }
 
+::-webkit-scrollbar {
+  width: 0 !important;
+}
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0;
+}
+
 body,
 html {
   width: 100%;

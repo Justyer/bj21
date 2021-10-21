@@ -1,13 +1,12 @@
 <template>
-  <div>
-    <Header msg="Table"></Header>
+  <div class="table-style">
     <el-row class="login-card">
       <el-col style="padding: 10px">
-        <el-card shadow="always">
+        <el-card shadow="always" :body-style="{'background-color': 'transparent'}">
           <el-row>
             <el-col :span="3" v-for="o in 8" :key="o" style="padding: 5px;">
               <el-card v-if="o === 1" shadow="hover" :body-style="cardBackStyle">
-                <div>?</div>
+                <div>!</div>
                 <div class="name-in-card">{{ table.player_you.name }}</div>
               </el-card>
               <el-card v-else shadow="hover" :body-style="cardFrontStyle">{{ o }}</el-card>
@@ -44,19 +43,16 @@
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
-import Header from "../components/Header.vue";
 export default {
   name: "Table",
-  components: {
-    Header,
-  },
+  components: {},
   created() {
     this.table.seq = this.$route.params.seq;
     this.getTableInfo(this.table.seq);
   },
   mounted() {
     ipcRenderer.on("reply-tableinfo", (event, arg) => {
-      let pyou_name = "Kaller",
+      let pyou_name = "<nil>",
         pme_name = "<nil>";
       if (typeof arg.text.table.p1 !== "undefined") {
         if (arg.text.table.me == 1) {
@@ -161,5 +157,16 @@ export default {
 }
 .name-in-card {
   font-size: 30px;
+}
+.table-style {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #008080;
+  width: 100%;
+  height: 100%;
+  /* filter: blur(5px); */
+  background: url("../assets/home_background.jpeg");
 }
 </style>
