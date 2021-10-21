@@ -12,9 +12,21 @@ func (r *bj21Repo) login(txt []byte, srv v1.BlackJack_LogicConnServer) []byte {
 	var req v1.LoginRequest
 	json.ToObjectByBytes(txt, &req)
 	player := logic.NewPlayer(req.Name, srv)
-	r.data.world.AddOnlinePlayers(player)
+	r.data.world.AddOnlinePlayer(player)
 	token := player.GetToken()
 	return json.ToBytes(&v1.LoginReply{Token: token})
+}
+
+func (r *bj21Repo) logout(txt []byte) []byte {
+	var req v1.LogoutRequest
+	json.ToObjectByBytes(txt, &req)
+	p := r.data.world.GetPlayerByToken(req.Token)
+	if p.InTable != nil {
+		p.InTable.StandUp(req.Token)
+	}
+	r.data.world.DelOfflinePlayer(p)
+	var errstr string
+	return json.ToBytes(&v1.LogoutReply{Err: errstr})
 }
 
 func (r *bj21Repo) tablelist() []byte {

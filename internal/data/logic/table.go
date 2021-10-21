@@ -46,6 +46,7 @@ func (t *Table) SitDown(p *Player) error {
 	} else {
 		return errors.New("sits of table is full.")
 	}
+	p.InTable = t
 	return nil
 }
 

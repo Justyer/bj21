@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header msg="牌桌列表"></Header>
+    <Header msg="Table List"></Header>
     <el-row>
       <el-col :span="4" v-for="table in table_list" :key="table.name" style="padding: 5px">
         <el-card class="box-card" shadow="hover">

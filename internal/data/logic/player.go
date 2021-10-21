@@ -8,9 +8,10 @@ import (
 )
 
 type Player struct {
-	Name  string
-	token string
-	conn  v1.BlackJack_LogicConnServer
+	Name    string
+	token   string
+	conn    v1.BlackJack_LogicConnServer
+	InTable *Table
 }
 
 func NewPlayer(name string, conn v1.BlackJack_LogicConnServer) *Player {

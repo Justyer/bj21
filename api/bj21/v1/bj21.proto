@@ -33,6 +33,14 @@ message LoginReply {
   string token = 2;
 }
 
+// logout
+message LogoutRequest {
+  string token = 1;
+}
+message LogoutReply {
+  string err = 1;
+}
+
 // table list
 message TableListRequest {
   string token = 1;

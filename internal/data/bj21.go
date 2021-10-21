@@ -30,6 +30,8 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 		switch msg.Cmd {
 		case enum.CmdLogin:
 			rtxt = r.login(msg.Text, srv)
+		case enum.CmdLogout:
+			rtxt = r.logout(msg.Text)
 		case enum.CmdTableList:
 			rtxt = r.tablelist()
 		case enum.CmdSitDown:

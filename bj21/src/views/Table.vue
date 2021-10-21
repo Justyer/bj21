@@ -1,26 +1,38 @@
 <template>
   <div>
-    <Header msg="牌桌"></Header>
+    <Header msg="Table"></Header>
     <el-row class="login-card">
       <el-col style="padding: 10px">
         <el-card shadow="always">
           <el-row>
-            <el-col :span="3" v-for="o in 8" :key="o" style="padding: 5px">
-              <el-card shadow="hover" :body-style="{height: '150px', display: 'flex', 'justify-content': 'center', 'align-items': 'center'}">{{ o }}</el-card>
+            <el-col :span="3" v-for="o in 8" :key="o" style="padding: 5px;">
+              <el-card v-if="o === 1" shadow="hover" :body-style="cardBackStyle">
+                <div>?</div>
+                <div class="name-in-card">{{ table.player_you.name }}</div>
+              </el-card>
+              <el-card v-else shadow="hover" :body-style="cardFrontStyle">{{ o }}</el-card>
             </el-col>
           </el-row>
           <el-divider></el-divider>
           <el-button-group>
             <el-button @click="exitTable(this.table.seq)" class="button" icon="el-icon-back"></el-button>
-            <el-button class="button">{{ table.player_me.name }}</el-button>
-            <el-button class="button">{{ table.name }}:{{ table.seq }}</el-button>
-            <el-button class="button">{{ table.player_you.name }}</el-button>
+            <el-tooltip :content="table.seq" placement="top" effect="light" :show-after="1000">
+              <el-button class="button">
+                <i class="el-icon-arrow-left"></i>
+                {{ table.name }}
+                <i class="el-icon-arrow-right"></i>
+              </el-button>
+            </el-tooltip>
             <el-button @click="startGame(this.table.seq)" class="button" icon="el-icon-caret-right"></el-button>
           </el-button-group>
           <el-divider></el-divider>
           <el-row>
             <el-col :span="3" v-for="o in 8" :key="o" style="padding: 5px">
-              <el-card shadow="hover" :body-style="{height: '150px', display: 'flex', 'justify-content': 'center', 'align-items': 'center'}">{{ o }}</el-card>
+              <el-card v-if="o === 1" shadow="hover" :body-style="cardBackStyle">
+                <div>{{ o+3 }}</div>
+                <div class="name-in-card">{{ table.player_me.name }}</div>
+              </el-card>
+              <el-card v-else shadow="hover" :body-style="cardFrontStyle">{{ o+3 }}</el-card>
             </el-col>
           </el-row>
         </el-card>
@@ -44,8 +56,8 @@ export default {
   },
   mounted() {
     ipcRenderer.on("reply-tableinfo", (event, arg) => {
-      let pyou_name = "",
-        pme_name = "";
+      let pyou_name = "Kaller",
+        pme_name = "<nil>";
       if (typeof arg.text.table.p1 !== "undefined") {
         if (arg.text.table.me == 1) {
           pme_name = arg.text.table.p1.name;
@@ -94,6 +106,29 @@ export default {
           name: "<nil>",
         },
       },
+      cardFrontStyle: {
+        height: "150px",
+        display: "flex",
+        // "flex-direction": "column",
+        "justify-content": "center",
+        "align-items": "center",
+        "background-color": "#d2d9e4",
+        color: "#f08080",
+        // "text-shadow": "0.1em 0.1em 0.15em #d2d9e4",
+        "font-size": "100px",
+      },
+      cardBackStyle: {
+        height: "190px",
+        padding: "0",
+        display: "flex",
+        "flex-direction": "column",
+        "justify-content": "center",
+        "align-items": "center",
+        "background-color": "#4768b3",
+        color: "#f08080",
+        "text-shadow": "0.1em 0.1em 0.15em #d2d9e4",
+        "font-size": "50px",
+      },
     };
   },
   methods: {
@@ -117,26 +152,14 @@ export default {
   },
 };
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/* h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-} */
 .login-card {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.name-in-card {
+  font-size: 30px;
 }
 </style>

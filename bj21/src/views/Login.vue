@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header msg="登录"></Header>
+    <Header msg="Login"></Header>
     <el-row class="login-card">
       <el-col :span="8">
         <el-card class="box-card" shadow="hover">

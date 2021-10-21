@@ -3,8 +3,12 @@
 </template>
 
 <style lang="scss">
+@font-face {
+  font-family: MNFREJORMMAY1;
+  src: url("./assets/MNF-REJORM-MAY-1.ttf");
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  // font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #00456b;
@@ -13,6 +17,10 @@
   width: 100%;
   height: 100%;
   margin: 0;
+}
+
+* {
+  font-family: MNFREJORMMAY1;
 }
 
 body,

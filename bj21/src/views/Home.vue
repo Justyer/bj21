@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Header msg="主页"></Header>
+    <Header msg="Home"></Header>
     <el-row>
-      <el-button @click="gotoSigleMatch" class="button" type="text" disabled>单人匹配</el-button>
-      <el-button @click="gotoTableList" class="button" type="text">牌桌列表</el-button>
+      <el-button @click="gotoSigleMatch" class="button" type="text" disabled>Single Match</el-button>
+      <el-button @click="gotoTableList" class="button" type="text">Table List</el-button>
     </el-row>
   </div>
 </template>
