@@ -24,11 +24,15 @@ func (r *bj21Repo) logout(txt []byte) []byte {
 	var req v1.LogoutRequest
 	json.ToObjectByBytes(txt, &req)
 	p := r.data.world.GetPlayerByToken(req.Token)
-	if p.InTable != nil {
-		p.InTable.StandUp(req.Token)
-	}
-	r.data.world.DelOfflinePlayer(p)
 	var errstr string
+	if p == nil {
+		errstr = "player is not exist."
+	} else {
+		if p.InTable != nil {
+			p.InTable.StandUp(req.Token)
+		}
+		r.data.world.DelOfflinePlayer(p)
+	}
 	return json.ToBytes(&v1.LogoutReply{Err: errstr})
 }
 

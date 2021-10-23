@@ -4,7 +4,7 @@
       <el-col :span="6">
         <el-input
           v-model="username"
-          :spellcheck ="false"
+          :spellcheck="false"
           placeholder="V I C T I M"
           :maxlength="7"
           :input-style="{'background-color': 'transparent', 'color': '#ff2400'}"
@@ -22,6 +22,7 @@
 <script>
 import { ipcRenderer } from "electron";
 import Background from "../components/Background.vue";
+import { bizKey } from "../utils/server/logic_conn";
 export default {
   name: "Login",
   components: { Background },
@@ -31,17 +32,17 @@ export default {
     };
   },
   mounted() {
-    ipcRenderer.on("reply-login", (event, arg) => {
-      localStorage.setItem("user-token", arg.text.token);
+    ipcRenderer.on(bizKey("login"), () => {
       this.$router.push("/home");
     });
   },
   methods: {
     loginSubmit() {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("mainlogic", {
         cmd: "login",
         text: {
           name: this.username,
+          addr: "0.0.0.0:9009",
         },
       });
     },

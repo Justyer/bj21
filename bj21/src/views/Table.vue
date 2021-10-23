@@ -43,6 +43,7 @@
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
+import { bizKey } from "../utils/server/logic_conn";
 export default {
   name: "Table",
   components: {},
@@ -51,7 +52,7 @@ export default {
     this.getTableInfo(this.table.seq);
   },
   mounted() {
-    ipcRenderer.on("reply-tableinfo", (event, arg) => {
+    ipcRenderer.on(bizKey("tableinfo"), (event, arg) => {
       let pyou_name = "<nil>",
         pme_name = "<nil>";
       if (typeof arg.text.table.p1 !== "undefined") {
@@ -79,14 +80,14 @@ export default {
         },
       };
     });
-    ipcRenderer.on("reply-standup", (event, arg) => {
+    ipcRenderer.on(bizKey("standup"), (event, arg) => {
       if (typeof arg.text.err === "undefined") {
         this.$router.push({ name: "TableList" });
       } else {
         ElMessage(arg.text.err);
       }
     });
-    ipcRenderer.on("reply-table-action", () => {
+    ipcRenderer.on(bizKey("table-action"), () => {
       this.getTableInfo(this.table.seq);
     });
   },
@@ -129,7 +130,7 @@ export default {
   },
   methods: {
     getTableInfo(seq) {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("logicconn", {
         cmd: "tableinfo",
         text: {
           table_seq: seq,
@@ -138,7 +139,7 @@ export default {
     },
     startGame() {},
     exitTable(seq) {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("logicconn", {
         cmd: "standup",
         text: {
           table_seq: seq,

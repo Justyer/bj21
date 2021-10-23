@@ -16,18 +16,19 @@
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
 import Background from "../components/Background.vue";
+import { bizKey } from "../utils/server/logic_conn";
 export default {
   name: "Home",
   components: { Background },
   created() {
-    const userinfo = ipcRenderer.sendSync("backend-sys", {
+    const userinfo = ipcRenderer.sendSync("mainlogic", {
       cmd: "get-user-info",
       text: {},
     });
     this.name = userinfo.name;
   },
   mounted() {
-    ipcRenderer.on("reply-logout", (event, arg) => {
+    ipcRenderer.on(bizKey("logout"), (event, arg) => {
       if (typeof arg.text.err === "undefined") {
         this.$router.push("/login");
       } else {
@@ -44,13 +45,13 @@ export default {
       this.$router.push("/table_list");
     },
     backToLogin() {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("logicconn", {
         cmd: "logout",
         text: {},
       });
     },
     exitGame() {
-      ipcRenderer.send("backend-sys", {
+      ipcRenderer.send("mainlogic", {
         cmd: "exit",
         text: {},
       });

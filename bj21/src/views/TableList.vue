@@ -50,6 +50,7 @@
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
 import Background from "../components/Background.vue";
+import { bizKey } from '../utils/server/logic_conn';
 export default {
   name: "TableName",
   created() {
@@ -57,7 +58,7 @@ export default {
   },
   components: { Background },
   mounted() {
-    ipcRenderer.on("reply-tablelist", (event, arg) => {
+    ipcRenderer.on(bizKey("tablelist"), (event, arg) => {
       let table_list = [];
       arg.text.tables.forEach((table) => {
         let p1_name, p2_name;
@@ -78,9 +79,9 @@ export default {
           },
         });
       });
-      // this.table_list = table_list;
+      this.table_list = table_list;
     });
-    ipcRenderer.on("reply-sitdown", (event, arg) => {
+    ipcRenderer.on(bizKey("sitdown"), (event, arg) => {
       if (typeof arg.text.err === "undefined") {
         this.$router.push({
           name: "Table",
@@ -98,13 +99,13 @@ export default {
   },
   methods: {
     getTableList() {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("logicconn", {
         cmd: "tablelist",
         text: {},
       });
     },
     gotoTable(seq) {
-      ipcRenderer.send("logic-conn", {
+      ipcRenderer.send("logicconn", {
         cmd: "sitdown",
         text: {
           table_seq: seq,
