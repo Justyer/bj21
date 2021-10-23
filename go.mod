@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-kratos/kratos/v2 v2.0.5
+	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/speps/go-hashids v1.0.0

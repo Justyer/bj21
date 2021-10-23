@@ -1,22 +1,42 @@
 <template>
-  <div class="home-style">
+  <Background>
     <el-row class="home-menu">
-      <div class="home-logo">Black! Jack! 21</div>
+      <el-button style="color: #ff2400;" :size="medium" type="text">
+        <strong>V i c t i m -> {{ name }}</strong>
+      </el-button>
+      <el-button @click="gotoSigleMatch" type="text">Single Match</el-button>
+      <el-button @click="gotoTableList" type="text">Table List</el-button>
+      <el-button @click="backToLogin" type="text">Back to Login</el-button>
+      <el-button @click="exitGame" type="text">Exit</el-button>
     </el-row>
-    <el-row class="home-menu">
-      <el-button @click="gotoSigleMatch" style="color: white" type="text">Single Match</el-button>
-      <el-button @click="gotoTableList" style="color: white" type="text">Table List</el-button>
-      <el-button @click="backToLogin" style="color: white" type="text">Back to Login</el-button>
-    </el-row>
-  </div>
+  </Background>
 </template>
 
 <script>
+import { ipcRenderer } from "electron";
+import { ElMessage } from "element-plus";
+import Background from "../components/Background.vue";
 export default {
   name: "Home",
-  components: {},
+  components: { Background },
+  created() {
+    const userinfo = ipcRenderer.sendSync("backend-sys", {
+      cmd: "get-user-info",
+      text: {},
+    });
+    this.name = userinfo.name;
+  },
+  mounted() {
+    ipcRenderer.on("reply-logout", (event, arg) => {
+      if (typeof arg.text.err === "undefined") {
+        this.$router.push("/login");
+      } else {
+        ElMessage(arg.text.err);
+      }
+    });
+  },
   data() {
-    return {};
+    return { name: "" };
   },
   methods: {
     gotoSigleMatch() {},
@@ -24,7 +44,16 @@ export default {
       this.$router.push("/table_list");
     },
     backToLogin() {
-      this.$router.push("/login");
+      ipcRenderer.send("logic-conn", {
+        cmd: "logout",
+        text: {},
+      });
+    },
+    exitGame() {
+      ipcRenderer.send("backend-sys", {
+        cmd: "exit",
+        text: {},
+      });
     },
   },
 };
@@ -32,26 +61,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.home-style {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center;
-  align-items: center; */
-  background-color: #008080;
-  width: 100%;
-  height: 100%;
-  /* filter: blur(5px); */
-  background: url("../assets/home_background.jpeg");
-}
-
-.home-logo {
-  color: #470024;
-  font-size: 100px;
-}
-
 .home-menu {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: left;
+  justify-content: center;
+  align-items: center;
 }
 </style>

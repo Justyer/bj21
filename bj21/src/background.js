@@ -13,11 +13,11 @@ protocol.registerSchemesAsPrivileged([
 const grpc = require('@grpc/grpc-js')
 const messages = require('./api/bj21/v1/bj21_pb')
 const services = require('./api/bj21/v1/bj21_grpc_pb')
-const { marshalGrpcBytes, bizKey } = require('./util/igrpc')
+const { marshalGrpcBytes, bizKey } = require('./utils/igrpc')
 const client = new services.BlackJackClient('0.0.0.0:9009', grpc.credentials.createInsecure())
 const call = client.logicConn()
 let win // main windows.
-var token = '' // 用户登录后的临时token，暂时每次都需要登录
+const userinfo = {name: "", token: ''} // 用户登录后的临时token，暂时每次都需要登录
 
 async function createWindow() {
   // Create the browser window.
@@ -25,6 +25,7 @@ async function createWindow() {
     width: 1280,
     height: 720,
     autoHideMenuBar: true,
+    frame: false,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -37,7 +38,7 @@ async function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-    if (!process.env.IS_TEST) win.webContents.openDevTools();
+    // if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
     // Load the index.html when not in development
@@ -47,6 +48,7 @@ async function createWindow() {
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
+  console.log("quit soon.")
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== "darwin") {
@@ -83,7 +85,8 @@ call.on('data', (note) => {
   let textdic = JSON.parse(new TextDecoder().decode(note.getText()))
   console.log(textdic)
   if (note.getCmd() == "login") {
-    token = textdic.token
+    userinfo['name'] = textdic.name
+    userinfo['token'] = textdic.token
   }
   const key = bizKey(note.getCmd())
   win.webContents.send(key, {
@@ -97,10 +100,23 @@ ipcMain.on('logic-conn', (event, arg) => {
   const msg = new messages.Message()
   msg.setCmd(arg.cmd)
   if (arg.cmd !== 'login') {
-    arg.text['token'] = token
+    arg.text['token'] = userinfo['token']
   }
   msg.setText(marshalGrpcBytes(arg.text))
   call.write(msg)
+})
+
+ipcMain.on('backend-sys', (event, arg) => {
+  switch (arg.cmd) {
+    case "get-user-info":
+      event.returnValue = userinfo
+      break;
+    case 'exit':
+      win.close()
+      break;
+    default:
+      break;
+  }
 })
 
 // Exit cleanly on request from parent process in development mode.

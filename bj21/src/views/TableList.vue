@@ -1,41 +1,61 @@
 <template>
-  <div class="tablelist-style">
+  <Background>
     <el-row class="tablelist-menu">
-      <div class="tablelist-logo">Black! Jack! 21</div>
-    </el-row>
-    <el-row class="tablelist-menu">
-      <el-button @click="backToHome" style="color: white" type="text">Back to Home</el-button>
+      <el-button @click="backToHome" type="text">Back to Home</el-button>
     </el-row>
     <el-row>
-      <el-col :span="4" v-for="table in table_list" :key="table.name" style="padding: 10px">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <el-button
-                @click="gotoTable(table.seq)"
-                v-model="table.seq"
-                class="button"
-                type="text"
-              >{{ table.name }}</el-button>
-            </div>
+      <el-table
+        id="tablelist"
+        :data="table_list"
+        empty-text="No Tables"
+        max-height="200"
+        :header-cell-style="{
+          'background-color': 'transparent',
+          color: 'white',
+        }"
+        :header-row-style="{
+          'background-color': 'transparent',
+          color: 'white',
+        }"
+        :row-style="{
+          'background-color': 'transparent',
+          color: 'white',
+        }"
+        :cell-style="{
+          'background-color': 'transparent',
+          color: 'white',
+          border: 'none',
+        }"
+      >
+        <el-table-column align="center" prop="seq" label="Table Id" />
+        <el-table-column align="center" label="Table Name">
+          <template #default="scope">
+            <el-button
+              style="color: #af111c"
+              @click="gotoTable(scope.row.seq)"
+              v-model="scope.row.seq"
+              class="button"
+              type="text"
+            >{{ scope.row.name }}</el-button>
           </template>
-          <el-tag type="success">P1:{{ table.player1.name }}</el-tag>
-          <el-tag type="success">P2:{{ table.player2.name }}</el-tag>
-        </el-card>
-      </el-col>
+        </el-table-column>
+        <el-table-column align="center" prop="player1.name" label="P1" />
+        <el-table-column align="center" prop="player2.name" label="P2" />
+      </el-table>
     </el-row>
-  </div>
+  </Background>
 </template>
 
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
+import Background from "../components/Background.vue";
 export default {
   name: "TableName",
   created() {
     this.getTableList();
   },
-  components: {},
+  components: { Background },
   mounted() {
     ipcRenderer.on("reply-tablelist", (event, arg) => {
       let table_list = [];
@@ -58,7 +78,7 @@ export default {
           },
         });
       });
-      this.table_list = table_list;
+      // this.table_list = table_list;
     });
     ipcRenderer.on("reply-sitdown", (event, arg) => {
       if (typeof arg.text.err === "undefined") {
@@ -73,17 +93,7 @@ export default {
   },
   data() {
     return {
-      table_list: [
-        {
-          name: "kamistable",
-          player1: {
-            name: "dxc",
-          },
-          player2: {
-            name: "zxy",
-          },
-        },
-      ],
+      table_list: [],
     };
   },
   methods: {
@@ -110,26 +120,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.tablelist-style {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center;
-  align-items: center; */
-  background-color: #008080;
-  width: 100%;
-  height: 100%;
-  /* filter: blur(5px); */
-  background: url("../assets/home_background.jpeg");
-}
-
-.tablelist-logo {
-  color: #470024;
-  font-size: 100px;
-}
-
 .tablelist-menu {
   display: flex;
   flex-direction: column;
   justify-content: left;
+}
+
+#tablelist {
+  width: 100%;
+  margin: 20px;
+  color: red;
+  border: none;
+  background-color: transparent;
 }
 </style>

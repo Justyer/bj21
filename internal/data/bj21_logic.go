@@ -14,7 +14,10 @@ func (r *bj21Repo) login(txt []byte, srv v1.BlackJack_LogicConnServer) []byte {
 	player := logic.NewPlayer(req.Name, srv)
 	r.data.world.AddOnlinePlayer(player)
 	token := player.GetToken()
-	return json.ToBytes(&v1.LoginReply{Token: token})
+	return json.ToBytes(&v1.LoginReply{
+		Name:  req.Name,
+		Token: token,
+	})
 }
 
 func (r *bj21Repo) logout(txt []byte) []byte {

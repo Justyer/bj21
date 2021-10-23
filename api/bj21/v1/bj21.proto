@@ -30,6 +30,7 @@ message LoginRequest {
   string name = 1;
 }
 message LoginReply {
+  string name = 1;
   string token = 2;
 }
 
