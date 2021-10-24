@@ -11,20 +11,36 @@ func init() {
 }
 
 type Hands struct {
-	pk []*Card
+	cs []*Card
+}
+
+func NewHands() *Hands {
+	return &Hands{
+		cs: make([]*Card, 0),
+	}
+}
+
+func (h *Hands) Insert(c *Card) {
+	h.cs = append(h.cs, c)
+}
+
+func (h *Hands) Cards() []*Card {
+	return h.cs
 }
 
 type Card struct {
-	num int
+	Num int32
+	Id  string
 }
 
 type Poker []*Card
 
 func NewPoker() Poker {
-	ps := make(Poker, 10)
-	for i := 1; i <= 10; i++ {
+	ps := make(Poker, 11)
+	for i := 1; i <= 11; i++ {
 		ps[i-1] = &Card{
-			num: i,
+			Num: int32(i),
+			Id:  fmt.Sprintf("CD%s", defaulthid.GenId()),
 		}
 	}
 	return ps
@@ -39,9 +55,15 @@ func (p *Poker) Wash() {
 }
 
 func (p Poker) String() string {
-	var nums []int
+	var nums []int32
 	for _, pk := range p {
-		nums = append(nums, pk.num)
+		nums = append(nums, pk.Num)
 	}
 	return fmt.Sprintf("%v", nums)
+}
+
+func (p *Poker) Deal() *Card {
+	c := (*p)[len(*p)-1]
+	(*p) = (*p)[:len((*p))-1]
+	return c
 }

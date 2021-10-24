@@ -23,4 +23,6 @@ const (
 	CmdTableInfo = "tableinfo"
 	CmdSitDown   = "sitdown"
 	CmdStandUp   = "standup"
+	CmdStartGame = "startgame"
+	CmdEndGame   = "endgame"
 )

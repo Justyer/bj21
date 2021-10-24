@@ -3,7 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { Action } from "./utils/main_logic";
+import { Action } from "./logic/main";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 protocol.registerSchemesAsPrivileged([
@@ -16,7 +16,7 @@ async function createWindow() {
     width: 1280,
     height: 720,
     autoHideMenuBar: true,
-    frame: false,
+    // frame: false,
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,

@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { LogicConn, bizKey } from "./server/logic_conn";
+import { LogicConn, bizKey } from "@/logic/server/logic_conn";
 
 class Action {
     constructor(win) {

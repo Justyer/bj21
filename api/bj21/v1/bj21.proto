@@ -15,6 +15,12 @@ message Message {
 
 message Player {
   string name = 1;
+  repeated Card cards = 2;
+}
+
+message Card {
+  int32 num = 1;
+  string id = 2;
 }
 
 message Table {
@@ -23,6 +29,7 @@ message Table {
   Player p1 = 3;
   Player p2 = 4;
   int32 me = 5;
+  string status = 6;
 }
 
 // login
@@ -75,5 +82,23 @@ message StandUpRequest {
   string table_seq = 2;
 }
 message StandUpReply {
+  string err = 1;
+}
+
+// start game
+message StartGameRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message StartGameReply {
+  string err = 1;
+}
+
+// end game
+message EndGameRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message EndGameReply {
   string err = 1;
 }

@@ -49,8 +49,8 @@
 <script>
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
-import Background from "../components/Background.vue";
-import { bizKey } from '../utils/server/logic_conn';
+import Background from "@/components/Background.vue";
+import { bizKey } from '@/logic/server/logic_conn';
 export default {
   name: "TableName",
   created() {

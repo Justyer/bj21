@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	v1 "fxkt.tech/bj21/api/bj21/v1"
+	"fxkt.tech/bj21/internal/pkg/json"
 	"github.com/google/uuid"
 )
 
@@ -12,6 +13,7 @@ type Player struct {
 	token   string
 	conn    v1.BlackJack_LogicConnServer
 	InTable *Table
+	Hands   *Hands
 }
 
 func NewPlayer(name string, conn v1.BlackJack_LogicConnServer) *Player {
@@ -19,6 +21,7 @@ func NewPlayer(name string, conn v1.BlackJack_LogicConnServer) *Player {
 		Name:  name,
 		token: uuid.NewString(),
 		conn:  conn,
+		Hands: NewHands(),
 	}
 }
 
@@ -31,5 +34,14 @@ func (p *Player) GetToken() string {
 }
 
 func (p *Player) TellMe(msg *v1.Message) error {
+	fmt.Println("TellMe", p.Name, json.ToString(msg))
 	return p.conn.Send(msg)
+}
+
+func (p *Player) GiveMe(c *Card) {
+	p.Hands.Insert(c)
+}
+
+func (p *Player) WashHands() {
+	p.Hands = NewHands()
 }

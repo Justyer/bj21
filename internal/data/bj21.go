@@ -41,6 +41,10 @@ func (r *bj21Repo) LogicConn(srv v1.BlackJack_LogicConnServer) error {
 			rtxt = r.tableinfo(msg.Text)
 		case enum.CmdStandUp:
 			rtxt = r.standup(msg.Text)
+		case enum.CmdStartGame:
+			rtxt = r.startgame(msg.Text)
+		case enum.CmdEndGame:
+			rtxt = r.endGame(msg.Text)
 		}
 		srv.Send(&v1.Message{Cmd: msg.Cmd, Text: rtxt})
 		r.log.Debugw("cmd", msg.Cmd, "req", string(msg.Text), "res", string(rtxt))

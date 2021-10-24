@@ -98,9 +98,40 @@ func (r *bj21Repo) standup(txt []byte) []byte {
 	return json.ToBytes(&v1.StandUpReply{Err: errstr})
 }
 
-// func (r *bj21Repo) broadcast(seq, token string) {
-// 	tb := r.data.world.GetTableBySeq(seq)
-// 	if tb.P1 != nil && tb.P1.GetToken() != token {
-// 		tb.P1.
-// 	}
-// }
+func (r *bj21Repo) startgame(txt []byte) []byte {
+	var req v1.StartGameRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	var errstr string
+	if tb == nil {
+		errstr = "table is not exist."
+	} else {
+		err := tb.StartGame()
+		if err != nil {
+			errstr = err.Error()
+		} else {
+			tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, "")
+			r.log.Debugw("cmd", "table-action", "ocmd", "startgame")
+		}
+	}
+	return json.ToBytes(&v1.StartGameReply{Err: errstr})
+}
+
+func (r *bj21Repo) endGame(txt []byte) []byte {
+	var req v1.EndGameRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	var errstr string
+	if tb == nil {
+		errstr = "table is not exist."
+	} else {
+		err := tb.EndGame()
+		if err != nil {
+			errstr = err.Error()
+		} else {
+			tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, "")
+			r.log.Debugw("cmd", "table-action", "ocmd", "endGame")
+		}
+	}
+	return json.ToBytes(&v1.EndGameReply{Err: errstr})
+}
