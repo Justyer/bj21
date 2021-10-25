@@ -118,7 +118,26 @@ func (r *bj21Repo) playerhit(txt []byte) []byte {
 			errstr = err.Error()
 		} else {
 			tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, "")
-			r.log.Debugw("cmd", "table-action", "ocmd", "startgame")
+			r.log.Debugw("cmd", "table-action", "ocmd", "playerhit")
+		}
+	}
+	return json.ToBytes(&v1.PlayerHitReply{Err: errstr})
+}
+
+func (r *bj21Repo) playerstand(txt []byte) []byte {
+	var req v1.PlayerHitRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	var errstr string
+	if tb == nil {
+		errstr = "table is not exist."
+	} else {
+		err := tb.Stand(req.Token)
+		if err != nil {
+			errstr = err.Error()
+		} else {
+			tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, "")
+			r.log.Debugw("cmd", "table-action", "ocmd", "playerstand")
 		}
 	}
 	return json.ToBytes(&v1.PlayerHitReply{Err: errstr})

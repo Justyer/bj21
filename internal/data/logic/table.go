@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 
 	v1 "fxkt.tech/bj21/api/bj21/v1"
 )
@@ -15,12 +16,13 @@ const (
 )
 
 type Table struct {
-	Name   string
-	Seq    string
-	P1, P2 *Player
-	Pk     Poker
-	Status string
-	round  int32 // 0: p1, 1: p2
+	Name       string
+	Seq        string
+	P1, P2     *Player
+	Pk         Poker
+	Status     string
+	round      int32 // 0: p1, 1: p2
+	standcount int32
 
 	mu sync.Mutex
 }
@@ -134,12 +136,27 @@ func (t *Table) StartGame() error {
 }
 
 func (t *Table) Hit(token string) error {
-	cp := t.currentRoundPlayer()
-	if cp.token != token {
+	if t.currentRoundPlayer().token != token {
 		return errors.New("this is not your round.")
 	}
-	t.switchRound()
+	c := t.Pk.Deal()
+	t.currentRoundPlayer().GiveMe(c) // 发牌
+	t.switchRound()                  // 切换回合
 	return nil
+}
+
+// 本回合不要牌
+func (t *Table) Stand(token string) error {
+	if t.currentRoundPlayer().token != token {
+		return errors.New("this is not your round.")
+	}
+	if t.standcount < 1 {
+		atomic.AddInt32(&t.standcount, 1)
+		t.switchRound()
+		return nil
+	}
+	// 游戏结束
+	return t.EndGame()
 }
 
 func (t *Table) EndGame() error {
