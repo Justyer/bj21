@@ -76,14 +76,16 @@ func (t *Table) SitDown(p *Player) error {
 
 // 起身离开本桌
 func (t *Table) StandUp(token string) error {
+	// 游戏中如果起身的话，直接判负
+	if t.Status == statusGaming {
+		err := t.EndGame()
+		if err != nil {
+			return err
+		}
+	}
+
 	t.mu.Lock()
 	defer t.mu.Unlock()
-
-	// TODO: 游戏中如果起身的话，直接判负
-	err := t.EndGame()
-	if err != nil {
-		return err
-	}
 
 	if t.P1 != nil && t.P1.token == token {
 		t.P1 = nil
@@ -128,6 +130,15 @@ func (t *Table) StartGame() error {
 		t.switchRound()                  // 切换回合
 	}
 	t.Status = statusGaming
+	return nil
+}
+
+func (t *Table) Hit(token string) error {
+	cp := t.currentRoundPlayer()
+	if cp.token != token {
+		return errors.New("this is not your round.")
+	}
+	t.switchRound()
 	return nil
 }
 

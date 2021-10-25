@@ -53,7 +53,7 @@ class Action {
                     event.returnValue = this.userinfo
                     break;
                 case 'exit':
-                    win.close()
+                    this.win.close()
                     break;
                 default:
                     break;

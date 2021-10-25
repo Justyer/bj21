@@ -7,7 +7,7 @@
           <el-divider></el-divider>
 
           <el-button-group>
-            <el-button @click="exitTable(table.seq)" class="button" icon="el-icon-back"></el-button>
+            <el-button @click="exitTable(table.seq)" class="button" icon="el-icon-back">Escape</el-button>
             <el-tooltip :content="table.seq" placement="top" effect="light" :show-after="1000">
               <el-button class="button">
                 <i class="el-icon-arrow-left"></i>
@@ -15,9 +15,9 @@
                 <i class="el-icon-arrow-right"></i>
               </el-button>
             </el-tooltip>
-            <el-button @click="startGame(table.seq)" class="button" icon="el-icon-switch-button"></el-button>
-            <el-button @click="dealCard(table.seq)" class="button" icon="el-icon-thumb"></el-button>
-            <el-button @click="noDealCard(table.seq)" class="button" icon="el-icon-hot-water"></el-button>
+            <el-button @click="startGame(table.seq)" class="button" :icon="controller.switchStartEndIcon">{{ controller.switchStartEndText }}</el-button>
+            <el-button @click="playerHit(table.seq)" class="button" icon="el-icon-thumb">Hit</el-button>
+            <el-button @click="playerStand(table.seq)" class="button" icon="el-icon-hot-water">Stand</el-button>
           </el-button-group>
 
           <el-divider></el-divider>
@@ -43,6 +43,13 @@ export default {
   },
   mounted() {
     onTableInfo((table) => {
+      if (table.status === "idle") {
+        this.controller.switchStartEndIcon = "el-icon-video-play";
+        this.controller.switchStartEndText = "Start Game";
+      } else {
+        this.controller.switchStartEndIcon = "el-icon-video-pause";
+        this.controller.switchStartEndText = "Surrender";
+      }
       this.table = table;
     });
     logicConnReply("standup", (event, arg) => {
@@ -71,11 +78,17 @@ export default {
         player_you: {
           name: "<nil>",
           hands: [],
+          sum_text: "?/21",
         },
         player_me: {
           name: "<nil>",
           hands: [],
+          sum_text: "?/21",
         },
+      },
+      controller: {
+        switchStartEndIcon: "el-icon-video-play",
+        switchStartEndText: "Start Game",
       },
     };
   },
@@ -96,12 +109,22 @@ export default {
         },
       });
     },
+    playerHit(seq) {
+      logicConnSender({
+        cmd: "playerhit",
+        text: { table_seq: seq },
+      });
+    },
+    playerStand(seq) {
+      logicConnSender({
+        cmd: "playerstand",
+        text: { table_seq: seq },
+      });
+    },
     exitTable(seq) {
       logicConnSender({
         cmd: "standup",
-        text: {
-          table_seq: seq,
-        },
+        text: { table_seq: seq },
       });
     },
   },

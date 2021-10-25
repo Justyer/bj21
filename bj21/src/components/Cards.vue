@@ -5,7 +5,7 @@
         <div v-if="card.num === 0">?</div>
         <div v-else>{{ card.num }}</div>
         <div class="name-in-card">{{ player.name }}</div>
-        <div  class="name-in-card">{{ card.sum_text }}</div>
+        <div class="name-in-card">{{ player.sum_text }}</div>
       </el-card>
       <el-card v-else shadow="hover" v-model="card.id" :body-style="cardFrontStyle">{{ card.num }}</el-card>
     </el-col>

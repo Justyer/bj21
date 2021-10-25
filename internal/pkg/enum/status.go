@@ -17,12 +17,14 @@ const (
 )
 
 const (
-	CmdLogin     = "login"
-	CmdLogout    = "logout"
-	CmdTableList = "tablelist"
-	CmdTableInfo = "tableinfo"
-	CmdSitDown   = "sitdown"
-	CmdStandUp   = "standup"
-	CmdStartGame = "startgame"
-	CmdEndGame   = "endgame"
+	CmdLogin       = "login"
+	CmdLogout      = "logout"
+	CmdTableList   = "tablelist"
+	CmdTableInfo   = "tableinfo"
+	CmdSitDown     = "sitdown"
+	CmdStandUp     = "standup"
+	CmdStartGame   = "startgame"
+	CmdPlayerHit   = "playerhit"
+	CmdPlayerStand = "playerstand"
+	CmdEndGame     = "endgame"
 )

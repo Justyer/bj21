@@ -33,7 +33,7 @@ export default {
 }
 
 .bk-logo {
-  color: #00477d;
+  color: #007d95;
   font-size: 100px;
 }
 </style>

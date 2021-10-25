@@ -4,39 +4,24 @@
       <el-button @click="backToHome" type="text">Back to Home</el-button>
     </el-row>
     <el-row>
-      <el-table
-        id="tablelist"
-        :data="table_list"
-        empty-text="No Tables"
-        max-height="200"
-        :header-cell-style="{
+      <el-table id="tablelist" :data="table_list" empty-text="No Tables" max-height="200" :header-cell-style="{
           'background-color': 'transparent',
           color: 'white',
-        }"
-        :header-row-style="{
+        }" :header-row-style="{
           'background-color': 'transparent',
           color: 'white',
-        }"
-        :row-style="{
+        }" :row-style="{
           'background-color': 'transparent',
           color: 'white',
-        }"
-        :cell-style="{
+        }" :cell-style="{
           'background-color': 'transparent',
           color: 'white',
           border: 'none',
-        }"
-      >
+        }">
         <el-table-column align="center" prop="seq" label="Table Id" />
         <el-table-column align="center" label="Table Name">
           <template #default="scope">
-            <el-button
-              style="color: #af111c"
-              @click="gotoTable(scope.row.seq)"
-              v-model="scope.row.seq"
-              class="button"
-              type="text"
-            >{{ scope.row.name }}</el-button>
+            <el-button style="color: #e6c35c" @click="gotoTable(scope.row.seq)" v-model="scope.row.seq" class="button" type="text">{{ scope.row.name }}({{ scope.row.status }})</el-button>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="player1.name" label="P1" />
@@ -50,7 +35,8 @@
 import { ipcRenderer } from "electron";
 import { ElMessage } from "element-plus";
 import Background from "@/components/Background.vue";
-import { bizKey } from '@/logic/server/logic_conn';
+import { bizKey } from "@/logic/server/logic_conn";
+import { isUndefined } from "@/utils/judge";
 export default {
   name: "TableName",
   created() {
@@ -62,10 +48,10 @@ export default {
       let table_list = [];
       arg.text.tables.forEach((table) => {
         let p1_name, p2_name;
-        if (typeof table.p1 !== "undefined") {
+        if (!isUndefined(table.p1)) {
           p1_name = table.p1.name;
         }
-        if (typeof table.p2 !== "undefined") {
+        if (!isUndefined(table.p2)) {
           p2_name = table.p2.name;
         }
         table_list.push({
@@ -77,6 +63,7 @@ export default {
           player2: {
             name: p2_name,
           },
+          status: table.status,
         });
       });
       this.table_list = table_list;

@@ -2,18 +2,12 @@
   <Background>
     <el-row class="login-menu">
       <el-col :span="6">
-        <el-input
-          v-model="username"
-          :spellcheck="false"
-          placeholder="V I C T I M"
-          :maxlength="7"
-          :input-style="{'background-color': 'transparent', 'color': '#ff2400'}"
-          prefix-icon="el-icon-knife-fork"
-        >
+        <el-input v-model="username" :spellcheck="false" placeholder="V I C T I M" :maxlength="7" :input-style="{'background-color': 'transparent', 'color': '#ff2400'}" prefix-icon="el-icon-knife-fork">
           <template #append>
             <el-button icon="el-icon-right" @click="loginSubmit"></el-button>
           </template>
         </el-input>
+        <el-button @click="exitGame" type="text">Exit</el-button>
       </el-col>
     </el-row>
   </Background>
@@ -44,6 +38,12 @@ export default {
           name: this.username,
           addr: "0.0.0.0:9009",
         },
+      });
+    },
+    exitGame() {
+      ipcRenderer.send("mainlogic", {
+        cmd: "exit",
+        text: {},
       });
     },
   },

@@ -94,6 +94,24 @@ message StartGameReply {
   string err = 1;
 }
 
+// player hit
+message PlayerHitRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message PlayerHitReply {
+  string err = 1;
+}
+
+// player stand
+message PlayerStandRequest {
+  string token = 1;
+  string table_seq = 2;
+}
+message PlayerStandReply {
+  string err = 1;
+}
+
 // end game
 message EndGameRequest {
   string token = 1;

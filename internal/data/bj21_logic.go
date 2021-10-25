@@ -40,19 +40,7 @@ func (r *bj21Repo) tablelist() []byte {
 	tlist := r.data.world.TableList()
 	rtables := make([]*v1.Table, len(tlist))
 	for i, tb := range tlist {
-		var p1, p2 *v1.Player
-		if tb.P1 != nil {
-			p1 = &v1.Player{Name: tb.P1.Name}
-		}
-		if tb.P2 != nil {
-			p2 = &v1.Player{Name: tb.P2.Name}
-		}
-		rtables[i] = &v1.Table{
-			Name: tb.Name,
-			Seq:  tb.Seq,
-			P1:   p1,
-			P2:   p2,
-		}
+		rtables[i] = tableLToP(tb, "")
 	}
 	return json.ToBytes(&v1.TableListReply{Tables: rtables})
 }
@@ -115,6 +103,25 @@ func (r *bj21Repo) startgame(txt []byte) []byte {
 		}
 	}
 	return json.ToBytes(&v1.StartGameReply{Err: errstr})
+}
+
+func (r *bj21Repo) playerhit(txt []byte) []byte {
+	var req v1.PlayerHitRequest
+	json.ToObjectByBytes(txt, &req)
+	tb := r.data.world.GetTableBySeq(req.TableSeq)
+	var errstr string
+	if tb == nil {
+		errstr = "table is not exist."
+	} else {
+		err := tb.Hit(req.Token)
+		if err != nil {
+			errstr = err.Error()
+		} else {
+			tb.Broadcast(&v1.Message{Cmd: "table-action", Text: emptyjson}, "")
+			r.log.Debugw("cmd", "table-action", "ocmd", "startgame")
+		}
+	}
+	return json.ToBytes(&v1.PlayerHitReply{Err: errstr})
 }
 
 func (r *bj21Repo) endGame(txt []byte) []byte {
